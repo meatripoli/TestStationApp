@@ -7,6 +7,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const useStyles = makeStyles({
   table: {
@@ -43,7 +44,12 @@ export default function SimpleTable() {
           {rows.map((row) => (
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {row.id}
+                <Checkbox
+                    defaultChecked
+                    indeterminate
+                    color="default"
+                    inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                /> {row.id}
               </TableCell>
               <TableCell align="right">{row.status}</TableCell>
               <TableCell align="right">{row.serial}</TableCell>
