@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect,useContext,useState} from 'react';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,21 +16,33 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(id, status, serial) {
-  return { id, status, serial };
+function createData(id, status, serial, flag) {
+  return { id, status, serial,flag };
 }
-
 const rows = [
-  createData('1', 'Idle', ''),
-  createData('2', 'Idle', ''),
-  createData('3', 'Idle', ''),
-  createData('4', 'Idle', ''),
-  createData('5', 'Idle', ''),
+  createData('1', 'Idle', '',false),
+  createData('2', 'Idle', '',false),
+  createData('3', 'Idle', '',false),
+  createData('4', 'Idle', '',false),
+  createData('5', 'Idle', '',false),
 ];
 
-export default function SimpleTable() {
+export default ()=> {
   const classes = useStyles();
-
+  const [checked, setChecked] = useState({});
+  const handleChange = (event) => {
+    let newObj={};
+    newObj[event.target.name]={'flag': event.target.checked};
+    setChecked({...checked,...newObj});
+  };
+  useEffect(()=>{
+    // axios.get('')
+    // .then((res)=>{   
+    //once api is set up the obj will be created
+    //for now I have dummy id values
+    setChecked({1:{'flag':false},2:{'flag':false},3:{'flag':false},4:{'flag':false},5:{'flag':false}})
+    // });  
+  },[]);
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="simple table">
@@ -42,13 +55,13 @@ export default function SimpleTable() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow key={row.id}>
               <TableCell component="th" scope="row">
                 <Checkbox
-                    defaultChecked
-                    indeterminate
+                    name={row.id}
                     color="default"
-                    inputProps={{ 'aria-label': 'indeterminate checkbox' }}
+                    checked={checked[row.id]===undefined ? false : checked[row.id].flag}
+                    onChange={handleChange}
                 /> {row.id}
               </TableCell>
               <TableCell align="right">{row.status}</TableCell>
