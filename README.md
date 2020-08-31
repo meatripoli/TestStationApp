@@ -38,26 +38,5 @@ else go to [Station running](#station-running)
   - [sockets get request](#sockets-get-request)
 
 # HTTP Requests
-## GET
-- ### sockets get request
-  - route: 
-  - reply: list of sockets (array of objects {socketID,status})
-- ### station status get request
-  - station status 
-  - route: 
-  - reply: 
-    - empty = idle
-    - name of sequence = running
-- ### sequence list get request
-  - list of available sequences that user can run
-  - route: 
-  - reply: JSON with array of sequences
-## POST
-- ### station post request
-  - sequence name user chose
-  - route: /start-station
-  - data to send {sequencename}
-  - reply: 200 status (success), 404 status (can't find), 500 status (format issue)
-- ### sockets post request
-  - data to send (array of objects {socketID, serialnumber})
-  - route: /start-socket
+
+See the Swagger docs [here](teststand.yml)

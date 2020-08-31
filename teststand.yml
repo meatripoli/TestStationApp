@@ -1,0 +1,236 @@
+swagger: "2.0"
+info:
+  version: '1'
+  title: TestStand Service
+  description: Runs TestStand sequences and provides information about executions
+basePath: /teststand-service
+definitions:
+  Error:
+    description: Contains error information.
+    type: object
+    properties:
+      name:
+        description: String error code
+        type: string
+      code:
+        description: Numeric error code
+        type: integer
+      resourceType:
+        description: Type of resource associated with the error
+        type: string
+      resourceId:
+        description: Identifier of the resource associated with the error
+        type: string
+      message:
+        description: Complete error message
+        type: string
+      args:
+        description: Positional argument values for the error code
+        type: array
+        items:
+          type: string
+      innerErrors:
+        type: array
+        items:
+          $ref: '#/definitions/Error'
+    example:
+      name: Skyline.OneOrMoreErrorsOccurred
+      code: -251040
+      message: >-
+        One or more errors occurred. See the contained list for details of each
+        error.
+      args: []
+      innerErrors:
+        - name: TestStand.SequenceNotFound
+          code: -123456
+          resourceType: SequenceFile
+          resourceId: 29162;01B245D6;4243;0
+          message: 'No SequenceFile found with the specified identifier: 29162;01B245D6;4243;0.'
+          args: [29162;01B245D6;4243;0]
+  Execution:
+    description: Information about an execution
+    type: object
+    properties:
+      sequenceFile:
+        type: string
+      resultId:
+        type: string
+  SocketStateItem:
+    description: Socket item for socket state request
+    type: object
+    properties:
+      socketIndex:
+        type: integer
+        description: Socket index to start
+      state:
+        type: string
+  SocketRequestItem:
+    description: Socket item for Start Socket request
+    type: object
+    properties:
+      socketIndex:
+        type: integer
+        description: Socket index to start
+      serialNumber:
+        type: string
+  SequenceFilesResponse:
+    description: The response to the Sequence Files request
+    type: object
+    properties:
+      sequenceFiles:
+        type: array
+        items:
+          type: string
+      numberOfFiles:
+        type: integer
+  ExecutionStatesResponse:
+    description: The response to the Execution States request
+    type: object
+    properties:
+      sockets:
+        type: array
+        items:
+          $ref: '#/definitions/SocketStateItem'
+      numberOfSockets:
+        type: integer
+  StationStateResponse:
+    description: The response to the Station State request
+    type: object
+    properties:
+      state:
+        type: string
+      sequenceFile:
+        type: string
+responses:
+  Error:
+    description: Error
+    schema:
+      title: Error Response
+      description: Error Response.
+      type: object
+      properties:
+        error:
+          $ref: '#/definitions/Error'
+  BadRequest:
+    description: Bad Request indicates that the server was unable to process the request because of invalid syntax.
+    schema:
+      title: Bad Request Error Response
+      description: Bad request error response containing error information.
+      type: object
+      properties:
+        error:
+          $ref: '#/definitions/Error'
+  NotFound:
+    description: The requested resource was not found.
+    schema:
+      title: Not Found Request Error Response
+      description: Not found error response containing error information.
+      type: object
+      properties:
+        error:
+          $ref: '#/definitions/Error'
+  Unauthorized:
+    description: Not authorized
+    headers:
+      WWW_Authenticate:
+        description: Information for how to authenticate
+        type: string
+
+parameters:
+  StartStationRequestBody:
+    in: body
+    name: startStation
+    description: Request for a new execution.
+    required: true
+    schema:
+      $ref: '#/definitions/Execution'
+  StartSocketRequestBody:
+    in: body
+    name: startSocket
+    description: Request to start sockets
+    required: true
+    schema:
+      title: Start Socket Request
+      type: array
+      items:
+        $ref: '#/definitions/SocketRequestItem'
+
+paths:
+  /sequence-files:
+    get:
+      tags: [sequences]
+      summary: Available sequences to execute
+      description: Returns all possibles sequence files which can be executed by this service.
+      operationId: Sequence Files
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/SequenceFilesResponse'
+        default:
+          $ref: '#/responses/Error'
+  /start-station:
+    post:
+      tags: [execution]
+      summary: Starts executing a sequence on the station
+      description: >-
+        Begins a new execution given a sequence file name.
+      operationId: Start Station
+      parameters:
+        - $ref: '#/parameters/StartStationRequestBody'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/responses/Error'
+  /stop-station:
+    post:
+      tags: [execution]
+      summary: Terminates all executions on the station
+      operationId: Stop Station
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/responses/Error'
+  /start-socket:
+    post:
+      tags: [execution]
+      summary: Starts a socket on a station.
+      description: >-
+        Sets the Serial Number and the Start Flag for a given socket.
+        The sequence file uses this to continue executing.
+      operationId: Start Socket
+      parameters:
+        - $ref: '#/parameters/StartSocketRequestBody'
+      responses:
+        200:
+          description: OK
+        default:
+          $ref: '#/responses/Error'
+  /socket-states:
+    get:
+      tags: [execution]
+      summary: Current state of all the sockets' executions.
+      description: Returns the state for each test socket. If this array is empty, the station is not running.
+      operationId: Execution States
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExecutionStatesResponse'
+        default:
+          $ref: '#/responses/Error'
+  /station-state:
+    get:
+      tags: [execution]
+      summary: Current state of the station
+      description: Indicates whether or not the station is running and the sequence file that is running.
+      operationId: Station State
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/StationStateResponse'
+        default:
+          $ref: '#/responses/Error'
