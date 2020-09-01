@@ -55,8 +55,14 @@ definitions:
         type: string
       resultId:
         type: string
-  SocketStateItem:
-    description: Socket item for socket state request
+  StartSocketResponseItem:
+    description: Information about 
+    type: object
+    properties:
+      started:
+        type: boolean
+  SocketStateRequestItem:
+    description: Information about a socket for the Socket State request
     type: object
     properties:
       socketIndex:
@@ -64,8 +70,8 @@ definitions:
         description: Socket index to start
       state:
         type: string
-  SocketRequestItem:
-    description: Socket item for Start Socket request
+  StartSocketRequestItem:
+    description: Information about a socket for the Start Socket request
     type: object
     properties:
       socketIndex:
@@ -90,7 +96,7 @@ definitions:
       sockets:
         type: array
         items:
-          $ref: '#/definitions/SocketStateItem'
+          $ref: '#/definitions/SocketStateRequestItem'
       numberOfSockets:
         type: integer
   StationStateResponse:
@@ -101,6 +107,14 @@ definitions:
         type: string
       sequenceFile:
         type: string
+  StartSocketResponse:
+    description: The response to the Start Socket request
+    type: object
+    properties: 
+      sockets:
+        type: array
+        items:
+          $ref: '#/definitions/StartSocketResponseItem'
 responses:
   Error:
     description: Error
@@ -153,7 +167,7 @@ parameters:
       title: Start Socket Request
       type: array
       items:
-        $ref: '#/definitions/SocketRequestItem'
+        $ref: '#/definitions/StartSocketRequestItem'
 
 paths:
   /sequence-files:
@@ -206,6 +220,8 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/StartSocketResponse'
         default:
           $ref: '#/responses/Error'
   /socket-states:
