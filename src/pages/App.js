@@ -1,10 +1,52 @@
 import React from 'react';
-import Table from '../components/Table'
-import Card from '../components/Card'
+import Table from '../components/Table';
+import Card from '../components/Card';
 import '../styles/App.css';
 import {Grid} from '@material-ui/core/';
 
+
 function App(props) {
+
+  const sequenceSelected = (event)=>{
+    let currentSequence=event.currentTarget.value;
+    console.log(currentSequence);
+    //here we will send the currentSequence to the server to get the 
+  }
+
+  function createData(id, status, serial, flag) {
+    return { id, status, serial,flag };
+  }
+  const tableData = [
+    createData('1', 'Idle', '',false),
+    createData('2', 'Idle', '',false),
+    createData('3', 'Idle', '',false),
+    createData('4', 'Idle', '',false),
+    createData('5', 'Idle', '',false),
+  ];
+
+  const data = [
+    {
+      url: './img/tempIcon.jpg',
+      title: 'Sequence1',
+      width: '80%',
+    },
+    {
+      url: './img/tempIcon.jpg',
+      title: 'Sequence2',
+      width: '80%',
+    },
+    {
+      url: './img/tempIcon.jpg',
+      title: 'Sequence3',
+      width: '80%',
+    },
+    {
+      url: './img/tempIcon.jpg',
+      title: 'Sequence4',
+      width: '80%',
+    },
+  ];
+
   return (
     <div className="App">
       <header className="App-header">
@@ -17,15 +59,11 @@ function App(props) {
           justify="flex-start"
           alignItems="flex-start"
         >
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
+          {data.map((element)=> <Card click={sequenceSelected} item={element}/>)}
         </Grid>
       </header>
       <body className="App-body">
-        <Table></Table>
+        <Table rows={tableData}></Table>
         
       </body>
     </div>

@@ -1,5 +1,5 @@
 import React, {useEffect,useContext,useState} from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -16,18 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(id, status, serial, flag) {
-  return { id, status, serial,flag };
-}
-const rows = [
-  createData('1', 'Idle', '',false),
-  createData('2', 'Idle', '',false),
-  createData('3', 'Idle', '',false),
-  createData('4', 'Idle', '',false),
-  createData('5', 'Idle', '',false),
-];
-
-export default ()=> {
+export default (props)=> {
   const classes = useStyles();
   const [checked, setChecked] = useState({});
   const handleChange = (event) => {
@@ -54,7 +43,7 @@ export default ()=> {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {props.rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell component="th" scope="row">
                 <Checkbox
